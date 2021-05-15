@@ -159,7 +159,7 @@ for epoch in range(start_epoch,num_epochs):
 
   checkpoint_inpainter = {
       'epoch': epoch + 1,
-      'state_dict': net_inpainter.state_dict(),
+      'state_dict': net_impainter.state_dict(),
       'optimizer': optimizerI.state_dict(),
   }
 
