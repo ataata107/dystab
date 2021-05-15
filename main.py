@@ -18,7 +18,7 @@ from dataloader import FlowDataset, Rescale, ToTensor
 from utils import warp
 from model import createDeepLabv3, Inpainter
 from pad import pad
-from utils import save_ckp
+from utils import save_ckp, load_ckp
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -31,6 +31,10 @@ def weights_init(m):
         m.weight.data.fill_(1)
         m.bias.data.zero_()
 
+def toInt3(elem):
+    val  = elem.split("_")
+    val = val[1].split('.')
+    return int(val[0])
 
 # Set random seed for reproducibility
 manualSeed = 999
@@ -72,11 +76,22 @@ checkpoint_inpainter_path = "./checkpoint/inpainter/"
 #Checkpoint Path Dynamic
 checkpoint_dynamic_path = "./checkpoint/dynamic/"
 
+pretrained_inpainter = None
+pretrained_dynamic = None
+
 if not os.path.exists(checkpoint_inpainter_path):
         os.makedirs(checkpoint_inpainter_path)
+else:
+  a1 = sorted(os.listdir(checkpoint_inpainter_path),key = toInt3,reverse= True)
+  if(len(a1)>0):
+    pretrained_inpainter = a1[0]
+
 if not os.path.exists(checkpoint_dynamic_path):
         os.makedirs(checkpoint_dynamic_path)
-
+else:
+  a1 = sorted(os.listdir(checkpoint_dynamic_path),key = toInt3,reverse= True)
+  if(len(a1)>0):
+    pretrained_dynamic = a1[0]
 flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor(),Rescale((cnvrt_size,cnvrt_size))]))
 # flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor()]))
 
@@ -89,6 +104,14 @@ net_impainter = Inpainter(ngpu=1).to(device)
 # net_impainter.apply(weights_init)
 optimizerD = optim.Adam(net_dynamic.parameters(), lr=lr, betas=(beta1, beta2))
 optimizerI = optim.Adam(net_impainter.parameters(), lr=lr, betas=(beta1, beta2))
+
+if(pretrained_dynamic!=None):
+  net_dynamic, optimizerD, start_epoch = load_ckp(checkpoint_dynamic_path+pretrained_dynamic, net_dynamic, optimizerD)
+  print("Loaded pretrained: " + pretrained_dynamic)
+
+if(pretrained_inpainter!=None):
+  net_impainter, optimizerI, start_epoch = load_ckp(checkpoint_inpainter_path+pretrained_inpainter, net_impainter, optimizerI)
+  print("Loaded pretrained: " + pretrained_inpainter)
 
 loss_l1 = nn.L1Loss()
 loss_l2 = nn.MSELoss()
