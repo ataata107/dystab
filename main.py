@@ -120,7 +120,7 @@ I_losses = []
 D_losses = []
 iters = 0
 
-print("Starting Training Loop...")
+print("Starting Training Loop... from" + str(start_epoch))
 net_dynamic.train()
 net_impainter.train()
 
