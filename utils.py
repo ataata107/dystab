@@ -15,10 +15,7 @@ from torchvision import models
 import torch.nn as nn
 import torch.optim as optim
 from torch.autograd import Variable
-from dataloader import FlowDataset, Rescale, ToTensor
-from utils import warp
-from model import createDeepLabv3, Inpainter
-from pad import pad
+
 
 
 def flow_to_img(flow, normalize=True, info=None, flow_mag_max=None):
