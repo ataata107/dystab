@@ -18,6 +18,7 @@ from dataloader import FlowDataset, Rescale, ToTensor
 from utils import warp
 from model import createDeepLabv3, Inpainter
 from pad import pad
+from utils import save_ckp
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -43,8 +44,11 @@ workers = 2
 # Batch size during training
 batch_size = 2
 
+#Start Epoch
+start_epoch = 0
+
 # Number of training epochs
-num_epochs = 3
+num_epochs = 30
 
 # Learning rate for optimizers
 lr = 0.0004
@@ -62,7 +66,11 @@ device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else 
 #Rescale size
 cnvrt_size = 256
 
+#Checkpoint Path Inpainter
+checkpoint_inpainter_path = "./checkpoint/inpainter/"
 
+#Checkpoint Path Dynamic
+checkpoint_dynamic_path = "./checkpoint/dynamic/"
 
 flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor(),Rescale((cnvrt_size,cnvrt_size))]))
 # flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor()]))
@@ -89,7 +97,8 @@ net_dynamic.train()
 net_impainter.train()
 
 step = 1
-for epoch in range(num_epochs):
+for epoch in range(start_epoch,num_epochs):
+  step = 1
   for i, data in enumerate(dataloader, 0):
     # if(step%4!=0):
     net_dynamic.zero_grad()
@@ -138,8 +147,23 @@ for epoch in range(num_epochs):
     else:
       err.backward()
       optimizerI.step()
-    print("Step"+str(step),abs(err.item()),abs(t_c_loss.item()))
+    print("Epoch"+str(step),"Step"+str(step),abs(err.item()),abs(t_c_loss.item()))
     step+=1
     
     # break
-    
+  checkpoint_dynamic = {
+      'epoch': epoch + 1,
+      'state_dict': net_dynamic.state_dict(),
+      'optimizer': optimizerD.state_dict(),
+  }
+
+  checkpoint_inpainter = {
+      'epoch': epoch + 1,
+      'state_dict': net_inpainter.state_dict(),
+      'optimizer': optimizerI.state_dict(),
+  }
+
+  save_ckp(checkpoint_dynamic, checkpoint_dynamic_path+"checkpoint_"+str(epoch+1)+".pt")
+  save_ckp(checkpoint_inpainter, checkpoint_inpainter_path+"checkpoint_"+str(epoch+1)+".pt")
+
+  break
