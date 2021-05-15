@@ -72,6 +72,11 @@ checkpoint_inpainter_path = "./checkpoint/inpainter/"
 #Checkpoint Path Dynamic
 checkpoint_dynamic_path = "./checkpoint/dynamic/"
 
+if not os.path.exists(checkpoint_inpainter_path):
+        os.makedirs(checkpoint_inpainter_path)
+if not os.path.exists(checkpoint_dynamic_path):
+        os.makedirs(checkpoint_dynamic_path)
+
 flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor(),Rescale((cnvrt_size,cnvrt_size))]))
 # flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor()]))
 
