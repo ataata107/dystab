@@ -147,10 +147,10 @@ for epoch in range(start_epoch,num_epochs):
     else:
       err.backward()
       optimizerI.step()
-    print("Epoch"+str(step),"Step"+str(step),abs(err.item()),abs(t_c_loss.item()))
+    print("Epoch"+str(epoch),"Step"+str(step),abs(err.item()),abs(t_c_loss.item()))
     step+=1
     
-    # break
+    break
   checkpoint_dynamic = {
       'epoch': epoch + 1,
       'state_dict': net_dynamic.state_dict(),
@@ -166,4 +166,4 @@ for epoch in range(start_epoch,num_epochs):
   save_ckp(checkpoint_dynamic, checkpoint_dynamic_path+"checkpoint_"+str(epoch+1)+".pt")
   save_ckp(checkpoint_inpainter, checkpoint_inpainter_path+"checkpoint_"+str(epoch+1)+".pt")
 
-  break
+  # break
