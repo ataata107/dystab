@@ -178,7 +178,7 @@ for epoch in range(start_epoch,num_epochs):
     print("Epoch"+str(epoch),"Step"+str(step),abs(err.item()),abs(t_c_loss.item()))
     step+=1
     
-    break
+    # break
   checkpoint_dynamic = {
       'epoch': epoch + 1,
       'state_dict': net_dynamic.state_dict(),
