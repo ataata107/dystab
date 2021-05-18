@@ -146,10 +146,10 @@ for epoch in range(start_epoch,num_epochs):
     t_c_loss_2 = loss_l1(mask2*mask_flow_backward, warped_flow_forward*mask2)
 
     # print(flows.shape,first_image.shape,first_image.dtype)
-    err_num1 = loss_l2(torch.ones(5), torch.ones(5)) #0
-    err_num2 = loss_l2(torch.ones(5), torch.ones(5)) #0
-    err_den1 = loss_l2(torch.ones(5), torch.ones(5)) #0
-    err_den2 = loss_l2(torch.ones(5), torch.ones(5)) #0
+    err_num1 = loss_l2(torch.ones(5).to(device), torch.ones(5).to(device)) #0
+    err_num2 = loss_l2(torch.ones(5).to(device), torch.ones(5).to(device)) #0
+    err_den1 = loss_l2(torch.ones(5).to(device), torch.ones(5).to(device)) #0
+    err_den2 = loss_l2(torch.ones(5).to(device), torch.ones(5).to(device)) #0
     for k,flow in enumerate(torch.split(flows,1,1)):
       flow = torch.squeeze(flow, 1)
       # print(flow.shape)
