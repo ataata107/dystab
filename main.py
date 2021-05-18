@@ -146,10 +146,10 @@ for epoch in range(start_epoch,num_epochs):
     t_c_loss_2 = loss_l1(mask2*mask_flow_backward, warped_flow_forward*mask2)
 
     # print(flows.shape,first_image.shape,first_image.dtype)
-    err_num1 = 0
-    err_num2 = 0
-    err_den1 = 0
-    err_den2 = 0
+    err_num1 = loss_l2(torch.ones(5), torch.ones(5)) #0
+    err_num2 = loss_l2(torch.ones(5), torch.ones(5)) #0
+    err_den1 = loss_l2(torch.ones(5), torch.ones(5)) #0
+    err_den2 = loss_l2(torch.ones(5), torch.ones(5)) #0
     for k,flow in enumerate(torch.split(flows,1,1)):
       flow = torch.squeeze(flow, 1)
       # print(flow.shape)
@@ -159,10 +159,10 @@ for epoch in range(start_epoch,num_epochs):
       inpainted_2 = net_impainter(first_image,(mask)*flow,1-mask,(256,256)) 
       # err_num1+=loss_l2(mask*flow,inpainted_1)
       # err_num2+=loss_l2((1-mask)*flow,inpainted_2)
-      err_num1+=torch.norm(mask*flow-inpainted_1)
-      err_num2+=torch.norm((1-mask)*flow-inpainted_2)
-      err_den1+=torch.norm(mask*flow)
-      err_den2+=torch.norm((1-mask)*flow)
+      err_num1+= loss_l2(mask*flow, inpainted_1) #torch.norm(mask*flow-inpainted_1)
+      err_num2+= loss_l2((1-mask)*flow, inpainted_2) #torch.norm((1-mask)*flow-inpainted_2)
+      err_den1+= loss_l2(mask*flow/2, -mask*flow/2) #torch.norm(mask*flow)
+      err_den2+= loss_l2((1-mask)*flow/2, -(1-mask)*flow/2) #torch.norm((1-mask)*flow)
       # print(flow.shape, mask.shape,inpainted.shape)
     err = (err_num1/(err_den1+0.0001))+(err_num2/(err_den2+0.0001))
     # err.backward()
