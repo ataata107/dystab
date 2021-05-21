@@ -92,8 +92,8 @@ else:
   a1 = sorted(os.listdir(checkpoint_dynamic_path),key = toInt3,reverse= True)
   if(len(a1)>0):
     pretrained_dynamic = a1[0]
-flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor(),Rescale((cnvrt_size,cnvrt_size))]))
-# flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor()]))
+# flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor(),Rescale((cnvrt_size,cnvrt_size))]))
+flow_dataset = FlowDataset(transform = transforms.Compose([ToTensor()]))
 
 dataloader = DataLoader(flow_dataset, batch_size=batch_size,shuffle=True, num_workers=workers)
 
