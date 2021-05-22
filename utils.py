@@ -133,7 +133,7 @@ def load_ckp(checkpoint_fpath, model, optimizer):
 
 
 def norm_tensor(AA):
-    batch_size, height, width = AA.shape
+    batch_size, channels, height, width = AA.shape
     AA = AA.view(batch_size, -1)
     AA -= AA.min(1, keepdim=True)[0]
     AA /= AA.max(1, keepdim=True)[0]
