@@ -137,5 +137,5 @@ def norm_tensor(AA):
     AA = AA.view(batch_size, -1)
     AA -= AA.min(1, keepdim=True)[0]
     AA /= AA.max(1, keepdim=True)[0]
-    AA = AA.view(batch_size, height, width)
+    AA = AA.view(batch_size, channels, height, width)
     return AA
