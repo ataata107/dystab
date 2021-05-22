@@ -130,3 +130,12 @@ def load_ckp(checkpoint_fpath, model, optimizer):
     # valid_loss_min = checkpoint['valid_loss_min']
     # return model, optimizer, epoch value, min validation loss 
     return model, optimizer, checkpoint['epoch']#, valid_loss_min.item()
+
+
+def norm_tensor(AA):
+    batch_size, height, width = AA.shape
+    AA = AA.view(batch_size, -1)
+    AA -= AA.min(1, keepdim=True)[0]
+    AA /= AA.max(1, keepdim=True)[0]
+    AA = AA.view(batch_size, height, width)
+    return AA

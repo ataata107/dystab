@@ -18,7 +18,7 @@ from dataloader import FlowDataset, Rescale, ToTensor
 from utils import warp
 from model import createDeepLabv3, Inpainter
 from pad import pad
-from utils import save_ckp, load_ckp
+from utils import save_ckp, load_ckp, norm_tensor
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -131,15 +131,20 @@ for epoch in range(start_epoch,num_epochs):
     # if(step%4!=0):
     net_dynamic.zero_grad()
     net_impainter.zero_grad()
-    first_image = data['first_image'].to(device).float()
 
+    first_image = data['first_image'].to(device).float()
     flows = data['flows'].to(device)
     flow_forward = data['forward_flow'].to(device)
     flow_backward = data['backward_flow'].to(device)
+
     mask_flow_forward = net_dynamic(flow_forward)
     mask_flow_forward = mask_flow_forward['out']
+    mask_flow_forward = norm_tensor(mask_flow_forward)
+    
     mask_flow_backward = net_dynamic(flow_backward)
     mask_flow_backward = mask_flow_backward['out']
+    mask_flow_backward = norm_tensor(mask_flow_backward)
+
     warped_flow_backward,mask1 = warp(mask_flow_backward,flow_forward)
     t_c_loss_1 = loss_l1(mask1*mask_flow_forward, warped_flow_backward*mask1)
     warped_flow_forward,mask2 = warp(mask_flow_forward,flow_backward)
@@ -155,6 +160,8 @@ for epoch in range(start_epoch,num_epochs):
       # print(flow.shape)
       mask = net_dynamic(flow)
       mask = mask['out']
+      mask = norm_tensor(mask)
+
       inpainted_1 = net_impainter(first_image,(1-mask)*flow,mask,(256,256)) 
       inpainted_2 = net_impainter(first_image,(mask)*flow,1-mask,(256,256)) 
       # err_num1+=loss_l2(mask*flow,inpainted_1)
