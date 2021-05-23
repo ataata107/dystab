@@ -1,7 +1,7 @@
 # dystab
 Paper Implementation DyStaB: Unsupervised Object Segmentation via Dynamic-Static Bootstrapping
 
-createDataset notebbok to create the dataset.
+createDataset notebook to create the dataset.
 
 
 python main.py -> To train the model.
